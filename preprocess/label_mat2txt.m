@@ -34,10 +34,10 @@ for i = 1:size(RELEASE.annolist, 2)
     if size(RELEASE.annolist(i).annorect,1) == 0, % zero person in picture
         if make_val(i) < VAL_RATIO % add to validation
             fprintf(val_label_file, format_spec, RELEASE.annolist(i).image.name, invalid_pos);
-            train_count = train_count + 1;
+            val_count = train_count + 1;
         else % add to training
             fprintf(train_label_file, format_spec, RELEASE.annolist(i).image.name, invalid_pos);
-            val_count = val_count + 1;
+            train_count = val_count + 1;
         end
         continue;
     end
@@ -63,10 +63,10 @@ for i = 1:size(RELEASE.annolist, 2)
     end
     if make_val(i) < VAL_RATIO % add to validation
         fprintf(val_label_file, format_spec, RELEASE.annolist(i).image.name, format_annot');
-        train_count = train_count + 1;
+        val_count = train_count + 1;
     else % add to training
         fprintf(train_label_file, format_spec, RELEASE.annolist(i).image.name, format_annot');
-        val_count = val_count + 1;
+        train_count = val_count + 1;
     end
     
 end
