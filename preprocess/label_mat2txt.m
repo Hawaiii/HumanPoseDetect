@@ -1,6 +1,6 @@
 % Currently only using images with single person inside
 
-%load('mpii_human_pose_v1_u12_2/mpii_human_pose_v1_u12_1.mat')
+load('mpii_human_pose_v1_u12_2/mpii_human_pose_v1_u12_1.mat')
 
 train_label_file = fopen('train_label.txt','w');
 val_label_file = fopen('val_label.txt','w');
@@ -58,7 +58,13 @@ for i = 1:size(RELEASE.annolist, 2)
         if tmpcell{j,2} == 1,
             format_annot(tmpcell{j,1}+1, 3) = 1;
         else
-            format_annot(tmpcell{j,1}+1, 3) = 0;
+            if (tmpcell{j,1} == 8 || tmpcell{j,1} == 9) && (size(tmpcell{j,2},1) == 0)
+                format_annot(tmpcell{j,1}+1, 3) = 1;
+                format_annot(tmpcell{j,1}+1, 1) = round(tmpcell{j,3});
+                format_annot(tmpcell{j,1}+1, 2) = round(tmpcell{j,4});
+            else
+                format_annot(tmpcell{j,1}+1, 3) = 0;
+            end
         end
     end
     if make_val(i) < VAL_RATIO % add to validation
