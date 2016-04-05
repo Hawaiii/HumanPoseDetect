@@ -55,19 +55,10 @@ void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, 
               double value=255/(pow(sigma,2)*2*M_PI)*exp((-pow((w-x),2)-pow((h-y),2))/(2*pow(sigma,2))); 
               top_data[i*num+j*channels+h*height+w]=value;
            }
-        }
-    
+        }    
        }
      } 
    }
-
-}
-
-template <typename Dtype>
-void PositionToMapLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top, const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {
-
-
-
 }
 
 
