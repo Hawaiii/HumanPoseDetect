@@ -12,9 +12,9 @@ layer {
     mean_value: 116
     mean_value: 122
   }
-  data_param {
-   root_folder: " "
-   source: " "
+  image_data_param {
+   root_folder: "/home/mengxin1/mpii_human_pose_v1/"
+   source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label.txt"
    batch_size: 100
    shuffle: true
    label_num: 24 
@@ -34,8 +34,8 @@ layer {
     mean_value: 122
   }
   data_param {
-   root_folder: " "
-   source: " "
+   root_folder: "/home/mengxin1/mpii_human_pose_v1"
+   source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label.txt"
    batch_size: 100
    label_num: 24 
   }
@@ -403,8 +403,8 @@ layer {
 }
 layer {
   name: "loss"
-  type: "OurLoss"
+  type: "EuclideanLoss"
   bottom: "score"
-  bottom: "label"
+  bottom: "jointMap"
   top: "loss"
 }
