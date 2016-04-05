@@ -42,7 +42,7 @@ layer {
 }
 layer{
    name: "jointMap"
-   type: "positionToMap"
+   type: "PositionToMap"
    bottom: "data"
    bottom: "jointLocation"
    top: "jointMap"
