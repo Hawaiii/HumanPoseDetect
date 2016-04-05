@@ -19,7 +19,34 @@ void PositionToMapLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom, cons
 
 template <typename Dtype>
 void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, const vector<Blob<Dtype>*>& top) {
+  const float sigma = this->layer_param_.gaussian_param().std();
+  const int halfWindowSize = this->layer_param_.gaussian_param().half_window_size();
   
+  const Dtype* bottom_joint = bottom[1]->cpu_data();
+  Dtype* top_data = top[0]->mutable_cpu_data();
+  const int count = top[0]->count();
+  const int num = top[0]->num();
+  const int channels = top[0]->channels();
+
+  for (int i = 0; i < count; ++i)
+  {
+    top_data[i]=0;
+  }
+   
+  for (int i=0; i<num; ++i)
+  {
+   bool visible = (bottom_joint[i*3]==1)
+   if (visible)
+   {//assign value according to the joint location and gaussian value
+    int x=bottom_joint[i*3+1];   // NOTE: need to check x is the row or coloumn ?!
+    int y=bottom_joint[i*3+2];
+    
+    
+
+
+   } 
+
+  }
 
 }
 

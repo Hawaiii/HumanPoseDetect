@@ -33,7 +33,7 @@ layer {
     mean_value: 116
     mean_value: 122
   }
-  data_param {
+  image_data_param {
    root_folder: "/home/mengxin1/mpii_human_pose_v1_images/"
    source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label.txt"
    batch_size: 100
@@ -46,8 +46,9 @@ layer{
    bottom: "data"
    bottom: "jointLocation"
    top: "jointMap"
-   param {
+   gaussian_param {
       std: 1.5
+      half_window_size: 5
    }
 }
 layer {
