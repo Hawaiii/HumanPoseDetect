@@ -1,5 +1,6 @@
 #include <vector>
 #include <algorithm>
+#include <math.h>
 
 #include "caffe/layers/position_to_map_layer.hpp"
 #include "caffe/util/math_functions.hpp"
