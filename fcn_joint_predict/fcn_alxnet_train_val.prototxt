@@ -17,7 +17,7 @@ layer {
    source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label.txt"
    batch_size: 100
    shuffle: true
-   label_num: 24 
+   label_num: 48 
   }
 }
 layer {
@@ -37,7 +37,7 @@ layer {
    root_folder: "/home/mengxin1/mpii_human_pose_v1_images/"
    source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label.txt"
    batch_size: 100
-   label_num: 24 
+   label_num: 48 
   }
 }
 layer{
