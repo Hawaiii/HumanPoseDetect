@@ -42,12 +42,12 @@ void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, 
   {
     for (int j=0; j<channels; ++j)   //loop for joints in an image
     {
-      bool visible = (bottom_joint[i*3]==1)
+      bool visible = (bottom_joint[i*3+2]!=-1)
       if (visible)
       {
         //assign values according to the joint location and gaussian value
-        int y=bottom_joint[i*3+1];   // NOTE: need to check y indicates the row or column ?!
-        int x=bottom_joint[i*3+2];   // Here I assume that x indicates column, starts from 1, and is the second value in joint txt, check with Hawaii
+        int x=bottom_joint[i*3];   // NOTE: x indicates column and y indicates row 
+        int y=bottom_joint[i*3+1];   // Here I assume that x indicates column, starts from 1, and is the second value in joint txt, check with Hawaii
         for (int h=std::min(y-halfWindowSize-1,0); h<std::max(y+halfWindowSize,height); ++h)
         {
            for (int w=std::min(x-halfWindowSize-1,0); w<std:max(x+halfWindowSize,width); ++w)   //loop for each element in gaussian window
