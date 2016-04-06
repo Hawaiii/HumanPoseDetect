@@ -42,7 +42,7 @@ void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, 
   {
     for (int j=0; j<channels; ++j)   //loop for joints in an image
     {
-      bool visible = (bottom_joint[i*3+2]!=-1)
+      bool visible = (bottom_joint[i*3+2]!=-1);
       if (visible)
       {
         //assign values according to the joint location and gaussian value
@@ -50,7 +50,7 @@ void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, 
         int y=bottom_joint[i*3+1];   // Here I assume that x indicates column, starts from 1, and is the second value in joint txt, check with Hawaii
         for (int h=std::min(y-halfWindowSize-1,0); h<std::max(y+halfWindowSize,height); ++h)
         {
-           for (int w=std::min(x-halfWindowSize-1,0); w<std:max(x+halfWindowSize,width); ++w)   //loop for each element in gaussian window
+           for (int w=std::min(x-halfWindowSize-1,0); w<std::max(x+halfWindowSize,width); ++w)   //loop for each element in gaussian window
            {
               double value=255/(pow(sigma,2)*2*M_PI)*exp((-pow((w-x),2)-pow((h-y),2))/(2*pow(sigma,2))); 
               top_data[i*num+j*channels+h*height+w]=value;
@@ -69,8 +69,8 @@ STUB_GPU(PositionToMapLayer);
 #endif
 
 
-INSTANTIATE_CLASS(DropOutputLayer);
-REGISTER_LAYER_CLASS(DropOutput);
+INSTANTIATE_CLASS(PositionToMapLayer);
+REGISTER_LAYER_CLASS(PositionToMap);
 
 }  // namespace caffe
 

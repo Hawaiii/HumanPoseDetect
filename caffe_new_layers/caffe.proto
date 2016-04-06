@@ -397,7 +397,7 @@ message LayerParameter {
 
 message GaussianParameter {
 optional float std = 1 [default = 1.5];
-optional int half_window_size = 2 [default = 6];  
+optional int32 half_window_size = 2 [default = 6];  
 }
 
 // Message that stores parameters used to apply transformation
