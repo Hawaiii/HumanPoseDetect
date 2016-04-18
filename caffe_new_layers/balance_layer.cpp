@@ -13,12 +13,12 @@ template <typename Dtype>
 void BalanceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {  
   top[0]->ReshapeLike(*bottom[0]);
-  (&mask_)->ReshapeLike(*bottom[0]);
+  mask_.ReshapeLike(*bottom[0]);
 
 }
 
 template <typename Dtype>
-void set_mask(const vector<Blob<Dtype>*>& bottom){
+void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
   const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x w x h
   const Dtype* label = bottom[1]->cpu_data(); //jointmap: 1 x 16 x w x h
   Dtype* mask_data = mask_.mutable_cpu_data();
