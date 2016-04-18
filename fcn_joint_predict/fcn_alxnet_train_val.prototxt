@@ -403,9 +403,17 @@ layer {
   top: "score"
 }
 layer {
+  name: "balance"
+  type: "Balance"
+  bottom: "score"
+  bottom: "jointMap"
+  top: "bscore"
+
+}
+layer {
   name: "loss"
   type: "EuclideanLoss"
-  bottom: "score"
+  bottom: "bscore"
   bottom: "jointMap"
   top: "loss"
 }
