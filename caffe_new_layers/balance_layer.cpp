@@ -70,7 +70,10 @@ void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
 
   set_mask(bottom);
   Dtype* mask_data = mask_.mutable_cpu_data();
-  for (int i = 0; i < (*top)[0]->count(); i++){
+
+  const int count = bottom[0]->count();
+
+  for (int i = 0; i < count; i++){
     if (mask_data[i] > 0){
       top_data[i] = bottom_data[i];
     } else {
@@ -91,8 +94,6 @@ void BalanceLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   Dtype* mask_data = mask_.mutable_cpu_data();
   
   const int count = bottom[0]->count();
-  const int num = bottom[0]->num();
-  const int channels = bottom[0]->channels();
 
   for (int i = 0; i < count; i ++) 
   {
