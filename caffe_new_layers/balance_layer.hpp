@@ -22,7 +22,7 @@ class BalanceLayer : public Layer<Dtype> {
       const vector<Blob<Dtype>*>& top);
 
   virtual inline const char* type() const { return "Balance"; }
-  virtual inline int ExactNumBottomBlobs() const { return 3; }
+  virtual inline int ExactNumBottomBlobs() const { return 2; }
   virtual inline int MinTopBlobs() const { return 1; }
 
  protected:
@@ -34,6 +34,9 @@ class BalanceLayer : public Layer<Dtype> {
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
   virtual void Backward_gpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
+  void set_mask(const vector<Blob<Dtype>*>& bottom);
+
+  Blob<Dtype> mask_;
 
 };
 

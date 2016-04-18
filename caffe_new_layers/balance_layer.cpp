@@ -5,14 +5,17 @@
 
 namespace caffe {
 
+int rand_int(int i){
+  return caffe_rng_rand() % i;
+}
+
 template <typename Dtype>
 void BalanceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {  
   top[0]->ReshapeLike(*bottom[0]);
-  top[1]->ReshapeLike(*bottom[0]);
+  (&mask_)->ReshapeLike(*bottom[0]);
 
 }
-
 
 template <typename Dtype>
 void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
