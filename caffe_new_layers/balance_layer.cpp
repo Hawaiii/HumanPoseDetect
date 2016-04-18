@@ -19,7 +19,7 @@ void BalanceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
 
 template <typename Dtype>
 void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
-  const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x w x h
+  // const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x w x h
   const Dtype* label = bottom[1]->cpu_data(); //jointmap: 1 x 16 x w x h
   Dtype* mask_data = mask_.mutable_cpu_data();
 
@@ -50,7 +50,7 @@ void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
     int neg_count = 0;
     while (neg_count < pos_count){
       int select_neg = caffe_rng_rand() % count;
-      if (mask_[select_neg] == 0){
+      if (mask_data[select_neg] == 0){
         mask_data[select_neg] = 1;
         neg_count++;
       }
@@ -66,7 +66,7 @@ void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x w x h
   const Dtype* label = bottom[1]->cpu_data(); //jointMap: 1 x 16 x w x h
-  const Dtype* top_data = top[0]->cpu_data();
+  Dtype* top_data = top[0]->cpu_data();
 
   set_mask(bottom);
   Dtype* mask_data = mask_.mutable_cpu_data();
@@ -77,7 +77,7 @@ void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     if (mask_data[i] > 0){
       top_data[i] = bottom_data[i];
     } else {
-      top_data[i] = label[i]
+      top_data[i] = label[i];
     }
   }
 }
@@ -89,7 +89,6 @@ void BalanceLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   if (!propagate_down[0]) { return; }
 
   Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
-  const Dtype* bottom_label1 = bottom[1]->cpu_data();
   const Dtype* top_diff = top[0]->cpu_diff();
   Dtype* mask_data = mask_.mutable_cpu_data();
   
