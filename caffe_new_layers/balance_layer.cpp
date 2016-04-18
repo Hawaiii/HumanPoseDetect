@@ -66,7 +66,7 @@ void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x w x h
   const Dtype* label = bottom[1]->cpu_data(); //jointMap: 1 x 16 x w x h
-  Dtype* top_data = top[0]->cpu_data();
+  Dtype* top_data = top[0]->mutable_cpu_data();
 
   set_mask(bottom);
   Dtype* mask_data = mask_.mutable_cpu_data();
