@@ -1,3 +1,4 @@
+
 #include <vector>
 
 #include "caffe/layers/balance_layer.hpp"
