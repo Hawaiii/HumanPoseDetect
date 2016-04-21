@@ -47,7 +47,6 @@ void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
         }
       }
     }
-    std::cout << "joint:" << ijoint << " pos_count:" << pos_count << std::endl;
 
     // Set mask for negative samples
     int neg_count = 0;
@@ -59,8 +58,9 @@ void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
       }
     }
 
+//    std::cout << "joint:" << ijoint << " neg_count:" << neg_count << std::endl;
   }
-  
+
 }
 
 
@@ -75,14 +75,19 @@ void BalanceLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
   Dtype* mask_data = mask_.mutable_cpu_data();
 
   const int count = bottom[0]->count();
-
+  int cnt = 0;
   for (int i = 0; i < count; i++){
     if (mask_data[i] > 0){
       top_data[i] = bottom_data[i];
+     // if(bottom_data[i]!= 0) std::cout << "mask:" << bottom_data[i] << std::endl;
+      cnt++;
     } else {
       top_data[i] = label[i];
+      //if(bottom_data[i]!= 0) std::cout << bottom_data[i] << std::endl;
     }
+    //if(bottom_data[i]!=0) std::cout<<bottom_data[i]<<std::endl;
   }
+//  std::cout << cnt << std::endl;
 }
 
 
