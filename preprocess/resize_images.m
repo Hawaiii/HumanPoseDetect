@@ -7,12 +7,12 @@ label_file = fopen(label_file_path,'r');
 new_label_file = fopen(new_label_file_path,'w');
 joints=int16(zeros(1,48));
 tline = fgetl(label_file);
-num_lines=1;
+%num_lines=1;
 while ischar(tline)
     label = textscan(tline,format_spec);
     imageName = label{1};
-    display(num_lines);
-    num_lines=num_lines+1;
+    %display(num_lines);
+    %num_lines=num_lines+1;
     for i = 1:48
         joints(i) = label{i+1};
     end
