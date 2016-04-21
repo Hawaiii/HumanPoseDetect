@@ -8,7 +8,7 @@ val_label_file = fopen('val_label.txt','w');
 
 VAL_RATIO = 0.2
 format_spec = '%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d \n';
-invalid_pos = [-1 -1 0 -1 -1 0 -1 -1 0 -1 -1 0 -1 -1 0 -1 -1 0 -1 -1 0 -1 -1 0];
+invalid_pos = repmat([-1 -1 0],1,16);
 
 make_val = rand(size(RELEASE.img_train,2),1); %if < VAL_RATIO, add to validation set
 train_count = 0;
