@@ -13,9 +13,9 @@ layer {
     mean_value: 122
   }
   image_data_param {
-   root_folder: "/home/mengxin1/mpii_human_pose_v1_images/"
-   source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label.txt"
-   batch_size: 1
+   root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
+   source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label_resized.txt"
+   batch_size: 20
    shuffle: true
    label_num: 48 
   }
@@ -34,9 +34,9 @@ layer {
     mean_value: 122
   }
   image_data_param {
-   root_folder: "/home/mengxin1/mpii_human_pose_v1_images/"
-   source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label.txt"
-   batch_size: 1
+   root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
+   source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label_resized.txt"
+   batch_size: 20
    label_num: 48 
   }
 }
@@ -47,8 +47,8 @@ layer{
    bottom: "jointLocation"
    top: "jointMap"
    gaussian_param {
-      std: 30
-      half_window_size: 80
+      std: 25
+      half_window_size: 50
    }
 }
 layer {
