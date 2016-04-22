@@ -20,11 +20,12 @@ void BalanceLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
 
 template <typename Dtype>
 void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
-  // const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: 1 x 16 x h x w
-  const Dtype* label = bottom[1]->cpu_data(); //jointmap: 1 x 16 x h x w
+  // const Dtype* bottom_data = bottom[0]->cpu_data(); //bigscore: num x 16 x h x w
+  const Dtype* label = bottom[1]->cpu_data(); //jointmap: num x 16 x h x w
   Dtype* mask_data = mask_.mutable_cpu_data();
 
   int count = bottom[0]->count();
+  int num = bottom[0]->num();
   int channel = bottom[0]->channels();
   int height = bottom[0]->height();
   int width = bottom[0]->width();
@@ -34,31 +35,33 @@ void BalanceLayer<Dtype>::set_mask(const vector<Blob<Dtype>*>& bottom){
   for (int i = 0; i < count; i++){
     mask_data[i] = 0;
   }
-
-  for (int ijoint = 0; ijoint < channel; ijoint++){
-    // Read number of positive samples for each joint
-    int pos_count = 0;
-    for (int i = 0; i < width; i++){
-      for (int j = 0; j < height; j++){
-        int idx = ijoint*npixels + i*height + j;
-        if (label[idx] > 0){
-          mask_data[idx] = 1;
-          pos_count++;
+  for (int batch = 0; batch < num; batch++){
+    for (int ijoint = 0; ijoint < channel; ijoint++){
+      // Read number of positive samples for each joint
+      int pos_count = 0;
+      for (int i = 0; i < height; i++){
+        for (int j = 0; j < width; j++){
+          int idx = batch*count/num+ijoint*npixels + i*width + j;
+          if (label[idx] > 0){
+            mask_data[idx] = 1;
+            pos_count++;
+          }
         }
       }
-    }
+  
 
     // Set mask for negative samples
-    int neg_count = 0;
-    while (neg_count < pos_count){
-      int select_neg = caffe_rng_rand() % npixels;
-      if (mask_data[ijoint*npixels + select_neg] == 0){
-        mask_data[ijoint*npixels + select_neg] = 1;
-        neg_count++;
+      int neg_count = 0;
+      while (neg_count < pos_count){
+        int select_neg = caffe_rng_rand() % npixels;
+        if (mask_data[batch*count/num+ijoint*npixels + select_neg] == 0){
+          mask_data[batch*count/num+ijoint*npixels + select_neg] = 1;
+          neg_count++;
+        }
       }
-    }
 
 //    std::cout << "joint:" << ijoint << " neg_count:" << neg_count << std::endl;
+    }
   }
 
 }
