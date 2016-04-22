@@ -9,7 +9,7 @@ import numpy as np
 
 # init
 caffe.set_mode_gpu()
-caffe.set_device(2)
+caffe.set_device(3)
 
 # caffe.set_mode_cpu()
 
