@@ -15,7 +15,7 @@ layer {
   image_data_param {
    root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
    source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label_resized.txt"
-   batch_size: 20
+   batch_size: 15
    shuffle: true
    label_num: 48 
   }
@@ -36,7 +36,7 @@ layer {
   image_data_param {
    root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
    source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label_resized.txt"
-   batch_size: 20
+   batch_size: 15
    label_num: 48 
   }
 }
@@ -197,7 +197,7 @@ layer {
   top: "conv3"
 }
 layer {
-  name: "conv4"
+  name: "cconv4"
   type: "Convolution"
   bottom: "conv3"
   top: "conv4"
@@ -231,7 +231,7 @@ layer {
   top: "conv4"
 }
 layer {
-  name: "conv5"
+  name: "cconv5"
   type: "Convolution"
   bottom: "conv4"
   top: "conv5"

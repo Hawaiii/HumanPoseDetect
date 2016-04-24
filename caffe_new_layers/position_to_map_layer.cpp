@@ -56,12 +56,12 @@ void PositionToMapLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom, 
         //assign values according to the joint location and gaussian value
         int x=bottom_joint[i*(joint_count/joint_num)+j*3];   // NOTE: x indicates column and y indicates row 
         int y=bottom_joint[i*(joint_count/joint_num)+j*3+1];   // Here I assume that x indicates column, starts from 1, and is the second value in joint txt, check with Hawaii
-        for (int w=std::max(x-halfWindowSize-1,0); w<std::min(x+halfWindowSize,width); ++w)   //loop for each element in gaussian window
+        for (int h=std::max(y-halfWindowSize-1,0); h<std::min(y+halfWindowSize,height); ++h)   //loop for each element in gaussian window
         {
-          for (int h=std::max(y-halfWindowSize-1,0); h<std::min(y+halfWindowSize,height); ++h)
+          for (int w=std::max(x-halfWindowSize-1,0); w<std::min(x+halfWindowSize,width); ++w)
            {
-             double value=255/(pow(sigma,2)*2*M_PI)*exp((-pow((w-x),2)-pow((h-y),2))/(2*pow(sigma,2))); 
-              top_data[i*count/num+j*width*height+w*height+h]=value;
+             double value=100/(pow(sigma,2)*2*M_PI)*exp((-pow((w-x),2)-pow((h-y),2))/(2*pow(sigma,2))); 
+              top_data[i*count/num+j*width*height+h*width+w]=value;
            }
         }    
        }

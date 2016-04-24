@@ -9,11 +9,11 @@ import numpy as np
 
 # init
 caffe.set_mode_gpu()
-caffe.set_device(3)
+caffe.set_device(4)
 
 # caffe.set_mode_cpu()
 
-solver = caffe.SGDSolver('solver_finetune.prototxt')
+solver = caffe.SGDSolver('solver_fromScratch.prototxt')
 solver.net.copy_from('/home/mengxin1/HumanPoseDetect/fcn_joint_predict/bvlc_reference_caffenet.caffemodel')
 
 niter = 100000

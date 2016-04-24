@@ -231,7 +231,7 @@ layer {
   top: "conv4"
 }
 layer {
-  name: "conv5"
+  name: "cconv5"
   type: "Convolution"
   bottom: "conv4"
   top: "conv5"

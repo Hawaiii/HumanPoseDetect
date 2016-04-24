@@ -1,55 +1,11 @@
 name: "FCN-AlexNet-joint"
 layer {
   name: "data"
-  type: "ImageData"
-  top: "data"
-  top: "jointLocation"
-  include {
-    phase: TRAIN
+  type: "Input"
+  top:  "data"
+  input_param {
+    shape: {dim: 2 dim: 3 dim:512 dim:512}
   }
-  transform_param {
-    mean_value: 104
-    mean_value: 116
-    mean_value: 122
-  }
-  image_data_param {
-   root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
-   source: "/home/mengxin1/HumanPoseDetect/preprocess/train_label_resized.txt"
-   batch_size: 20
-   shuffle: true
-   label_num: 48 
-  }
-}
-layer {
-  name: "data"
-  type: "ImageData"
-  top: "data"
-  top: "jointLocation"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    mean_value: 104
-    mean_value: 116
-    mean_value: 122
-  }
-  image_data_param {
-   root_folder: "/home/mengxin1/mpii_human_pose_v1_images_resized/"
-   source: "/home/mengxin1/HumanPoseDetect/preprocess/val_label_resized.txt"
-   batch_size: 20
-   label_num: 48 
-  }
-}
-layer{
-   name: "jointMap"
-   type: "PositionToMap"
-   bottom: "data"
-   bottom: "jointLocation"
-   top: "jointMap"
-   gaussian_param {
-      std: 25
-      half_window_size: 50
-   }
 }
 layer {
   name: "conv1"
@@ -412,18 +368,4 @@ layer {
   bottom: "bigscore"
   bottom: "data"
   top: "score"
-}
-layer {
-  name: "balance"
-  type: "Balance"
-  bottom: "score"
-  bottom: "jointMap"
-  top: "bscore"
-}
-layer {
-  name: "loss"
-  type: "EuclideanLoss"
-  bottom: "bscore"
-  bottom: "jointMap"
-  top: "loss"
 }
