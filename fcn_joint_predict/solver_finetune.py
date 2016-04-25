@@ -16,7 +16,7 @@ caffe.set_device(3)
 solver = caffe.SGDSolver('solver_finetune.prototxt')
 solver.net.copy_from('/home/mengxin1/HumanPoseDetect/fcn_joint_predict/bvlc_reference_caffenet.caffemodel')
 
-niter = 100000
+niter = 30000
 train_loss = np.zeros(niter)
 
 f = open('log.txt', 'w')

@@ -11,7 +11,7 @@ import numpy as np
 caffe.set_mode_gpu()
 caffe.set_device(5)
 
-net = caffe.Net('/home/mengxin1/HumanPoseDetect/fcn_joint_predict/deploy_finetune.prototxt', '/home/mengxin1/HumanPoseDetect/fcn_joint_predict/models/model_iter_20000.caffemodel', caffe.TEST)
+net = caffe.Net('/home/mengxin1/HumanPoseDetect/fcn_joint_predict/deploy_finetune.prototxt', '/home/mengxin1/HumanPoseDetect/fcn_joint_predict/models/model_iter_10000.caffemodel', caffe.TEST)
 
 #create transformer for the input called 'data'
 mu = np.array([104, 116, 122]);
@@ -23,7 +23,7 @@ transformer.set_channel_swap('data', (2,1,0)) # swap channels from RGB to BGR
 
 # load image and transform
 imageDirectory = '/home/mengxin1/mpii_human_pose_v1_images_resized/'
-imageFile = '032078006.jpg'
+imageFile = '022649578.jpg'
 image = caffe.io.load_image(imageDirectory+imageFile);
 transformed_image = transformer.preprocess('data', image);
 
@@ -36,4 +36,4 @@ for i in range(num_joints):
    predict_joint_idx = np.argmax(output_scoreMap[i])
    predict_joint_sub = np.unravel_index(predict_joint_idx, output_scoreMap[i].shape)
    print 'predicted joint position ', i, ': '
-   print  predict_joint_sub[1], predict_joint_sub[0] 
+   print  predict_joint_sub[1], predict_joint_sub[0], output_scoreMap[i][predict_joint_sub[0]][predict_joint_sub[1]] 
