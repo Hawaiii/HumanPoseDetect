@@ -21,32 +21,32 @@ transformer.set_mean('data', mu)           # subtract the dataset-mean value in 
 transformer.set_raw_scale('data', 255)     # rescale from [0, 1] to [0, 255]
 transformer.set_channel_swap('data', (2,1,0)) # swap channels from RGB to BGR
 
-num_joings = 16
+num_joints = 16
 # Read ground truth labels
 import csv
 gt_file = open('/home/mengxin1/HumanPoseDetect/preprocess/val_label_resized.txt','rb')
 gt_reader = csv.reader(gt_file, delimiter=' ')
 gt_list = list(gt_reader)
 for gtl in gt_list:
-	gtl[1:] = [int(elem) for elem in gtl[1:]]
+	gtl[1:] = [int(elem) for elem in gtl[1:-1]]
 
 # Read resized bounding box sizes
 bbox_file = open('/home/mengxin1/HumanPoseDetect/preprocess/val_bbox.txt','rb')
 bbox_reader = csv.reader(bbox_file, delimiter=' ')
-bbox_list = list(gt_reader)
+bbox_list = list(bbox_reader)
 for bboxl in bbox_list:
 	bboxl[1:] = [float(elem) for elem in bboxl[1:]]
 #next(itertools.islice(csv.reader(f), N, None))
 
 # Predict for each joint
-correct_prediction = np.zeros(1,num_joints)
-tot_prediction = np.zeros(1,num_joints)
+correct_prediction = np.zeros((1,num_joints))
+tot_prediction = np.zeros((1,num_joints))
 imageDirectory = '/home/mengxin1/mpii_human_pose_v1_images_resized/'
 
 import math
 alpha = 0.1
 # For each image in val
-for i, gtl in gt_list:
+for i, gtl in enumerate(gt_list):
 	# load image and transform
 	imageFile = gtl[0]
 	image = caffe.io.load_image(imageDirectory+imageFile);
@@ -67,14 +67,9 @@ for i, gtl in gt_list:
 		tot_diff = math.sqrt(xdiff**2 + ydiff**2)
 		thres = alpha * max(bbox_list[i][1], bbox_list[i][2])
 		if tot_diff < thres:
-			correct_prediction[1,j] += 1
-		tot_prediction[1,j] += 1
-
-	#debug
-	if i == 0:
-		print xdiff, ydiff, tot_diff, thres
-		break	
+			correct_prediction[0,j] += 1
+		tot_prediction[0,j] += 1
 
 # Calculate PCK
 for j in range(num_joints):
-	print "PCK of joint",j,":", 1.0*correct_prediction[1,j]/ tot_prediction[1,j]
+	print "PCK of joint",j,":", 1.0*correct_prediction[0,j]/ tot_prediction[0,j]
