@@ -44,7 +44,7 @@ tot_prediction = np.zeros((1,num_joints))
 imageDirectory = '/home/mengxin1/mpii_human_pose_v1_images_resized/'
 
 import math
-alpha = 0.1
+alpha = 0.5
 # For each image in val
 for i, gtl in enumerate(gt_list):
 	# load image and transform
@@ -58,6 +58,9 @@ for i, gtl in enumerate(gt_list):
 	output_scoreMap = out['score'][0]
 	# num_joints = output_scoreMap.shape[0]
 	for j in range(num_joints):
+		if gtl[1+3*j+2] == -1:
+			continue
+		
 		predict_joint_idx = np.argmax(output_scoreMap[j])
 		predict_joint_sub = np.unravel_index(predict_joint_idx, output_scoreMap[j].shape)
 		# print 'predicted joint position ', j, ': '
@@ -69,7 +72,7 @@ for i, gtl in enumerate(gt_list):
 		if tot_diff < thres:
 			correct_prediction[0,j] += 1
 		tot_prediction[0,j] += 1
-
+	print "image", i, ":", correct_prediction, ":", tot_prediction
 # Calculate PCK
 for j in range(num_joints):
 	print "PCK of joint",j,":", 1.0*correct_prediction[0,j]/ tot_prediction[0,j]
