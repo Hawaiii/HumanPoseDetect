@@ -1,0 +1,77 @@
+within 0.1 * head segment length
+
+PCK of r ankle : 0.0837209302326
+PCK of r knee : 0.0953947368421
+PCK of r hip : 0.109619686801
+PCK of l hip : 0.113199105145
+PCK of l knee : 0.0890223921354
+PCK of l ankle : 0.0871862615588
+PCK of pelvis : 0.157752808989
+PCK of thorax : 0.340582862114
+PCK of upper neck : 0.362331448456
+PCK of head top : 0.282731622445
+PCK of r wrist : 0.153879686138
+PCK of l wrist : 0.158785249458
+PCK of r shoulder : 0.234680573664
+PCK of l shoulder : 0.233738074588
+PCK of l elbow : 0.159012131716
+PCK of l wrist : 0.135608048994
+
+within 0.5 * head segment length
+PCK of r ankle : 0.550830564784
+PCK of r knee : 0.576754385965
+PCK of r hip : 0.764205816555
+PCK of l hip : 0.763758389262
+PCK of l knee : 0.587110868378
+PCK of l ankle : 0.545574636724
+PCK of pelvis : 0.807640449438
+PCK of thorax : 0.923879947803
+PCK of upper neck : 0.92431491953
+PCK of head top : 0.889082209656
+PCK of r wrist : 0.642545771578
+PCK of l wrist : 0.701952277657
+PCK of r shoulder : 0.863102998696
+PCK of l shoulder : 0.859930615785
+PCK of l elbow : 0.67027729636
+PCK of l wrist : 0.633858267717
+
+
+
+[[  643.   809.  1323.  1348.   818.   637.  1499.  2017.  2009.  1873.
+   1266.  1360.  1734.  1731.  1263.  1204.]]
+[[ 1505.  1824.  2235.  2235.  1831.  1514.  2225.  2299.  2299.  2299.
+   2294.  2305.  2301.  2306.  2308.  2286.]]
+
+
+predicted joint position  0 : 
+240 415 0.0154222
+predicted joint position  1 : 
+235 325 0.010199
+predicted joint position  2 : 
+224 230 0.0145452
+predicted joint position  3 : 
+246 231 0.0158158
+predicted joint position  4 : 
+249 328 0.0147392
+predicted joint position  5 : 
+255 417 0.0176712
+predicted joint position  6 : 
+229 231 0.0169205
+predicted joint position  7 : 
+229 127 0.019243
+predicted joint position  8 : 
+227 107 0.0172382
+predicted joint position  9 : 
+225 32 0.0117938
+predicted joint position  10 : 
+191 243 0.00934818
+predicted joint position  11 : 
+255 95 0.00587101
+predicted joint position  12 : 
+232 127 0.0124624
+predicted joint position  13 : 
+250 127 0.0163917
+predicted joint position  14 : 
+280 191 0.00920276
+predicted joint position  15 : 
+274 165 0.00871844
