@@ -1,6 +1,7 @@
 import random
 import numpy as np
 from pystruct.learners import OneSlackSSVM
+from pystruct.models import BinaryClf
 
 class Pt:
 	x = None
@@ -73,6 +74,24 @@ def calc_feature(pose, score, feature_len, n_joint):
 	assert(feature_len == cnt) #
 	return f
 
+def format_weights(weight_arr, n_joint):
+	# weight_arr is (feature_len,) numpy array
+	# Returns a dictionary, where the weights could be looked up by checking
+	# weight[i], weight[(i,j)]
+	
+	weight = {}
+	# Unary
+	for i in xrange(n_joint):
+		weight[i] = weight_arr[i]
+	# Binary
+	cnt = n_joint
+	for i in xrange(n_joint):
+		for j in xrange(i+1, n_joint):
+			weight[(i,j)] = weight_arr[cnt]
+			weight[(j,i)] - weight[(i,j)]
+			cnt += 1
+	return weight
+
 def make_pts1d():
 	# Return 1 x (512*512) numpy array containing position tuples
 	pos_list = []
@@ -130,7 +149,10 @@ for i in xrange(n_imgs):
 		cnt += 1
 
 # Train SVM
-# @TODO
+smodel = BinaryClf(feature_len)
+svm = OneSlackSSVM(smodel)
+print("fitting svm...")
+svm.fit(X_train, Y_train)
 
 # Write weights
-# @TODO
+weights = format_weights(svm.w, n_joint)
