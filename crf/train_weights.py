@@ -2,6 +2,7 @@ import random
 import numpy as np
 from pystruct.learners import OneSlackSSVM
 from pystruct.models import BinaryClf
+import loadCNNfeature as ldf
 
 class Pt:
 	x = None
@@ -110,7 +111,7 @@ def make_score1d(score):
 
 
 # Load the ground truth
-score, joint_location = load_full_person_data() #@TODO
+score, joint_location = ldf.load_full_person_data("../fcn_joint_predict/train_score_fullHuman.h5")
 n_imgs = score.shape[0]
 n_joint = 16
 feature_len = n_joint + 120 #16 choose 2 binary
