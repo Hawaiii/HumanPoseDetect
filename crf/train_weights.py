@@ -15,8 +15,8 @@ class Pt:
 	@staticmethod
 	def dist(pt0, pt1):
 		# returns numpy array of dimension (4,): [dx, dy, dx^2, dy^2]
-		dx = abs(pt0.x - pt1.x)
-		dy = abs(pt0.y - pt1.y)
+		dx = pt0.x - pt1.x
+		dy = pt0.y - pt1.y
 		return np.array([dx, dy, dx*dx, dy*dy])
 
 def get_pose(joint_gt, n_joint):
@@ -51,18 +51,18 @@ def random_pose_neg(joint_gt, n_joint, wdw_half, pts_1d, score):
 		for y in xrange(max(0, y_gt-wdw_half), min(512, y_gt+wdw_half+1)):
 			for x in xrange(max(0, x_gt-wdw_half), min(512, x_gt+wdw_half+1)):
 				score_dup[y,x] = min_score
+#		print score_dup[max(0, y_gt-wdw_half), max(0, x_gt-wdw_half)], score_dup.min(), score_dup.max(), pts_1d[y_gt*512+x_gt]
 		score_1d = make_score1d(score_dup)
 		p = np.random.choice(pts_1d, p=score_1d)
 		while too_close(p, joint_gt[3*i], joint_gt[3*i+1], wdw_half):
-			p = np.random.choice(pts_1d, p=score_1d)
 			print p, "too_close to (", joint_gt[3*i], ",", joint_gt[3*i+1],")"
-		rp.append(p)
+			print p, "prob", score_1d[p[1]*512+p[0]], "max",score_1d.max()
+			p = np.random.choice(pts_1d, p=score_1d)
+		rp.append(Pt(p[0], p[1]))
 	return tuple(rp)
 
 def too_close(point, x, y, wdw_half):
-	if abs(point[0]-x) <= wdw_half:
-		return True
-	if abs(point[1]-y) <= wdw_half:
+	if abs(point[0]-x) <= wdw_half and  abs(point[1]-y) <= wdw_half:
 		return True
 	return False
 
@@ -74,11 +74,13 @@ def calc_feature(pose, score, feature_len, n_joint):
 	cnt = 0
 	# Add Unary features from score
 	for i in xrange(n_joint):
-		f[0, cnt] = score[pose[i].x, pose[i].y]
+		f[0, cnt] = score[i, pose[i].y, pose[i].x]
 		cnt += 1
 	# Add Binary features
 	for i in xrange(n_joint):
-		for j in xrange(i+1, n_joint):
+		for j in xrange(n_joint):
+			if i == j:
+				continue
 			f[0, cnt:cnt+4] = Pt.dist(pose[i], pose[j])
 			cnt += 4
 	assert(feature_len == cnt) #
@@ -96,9 +98,10 @@ def format_weights(weight_arr, n_joint):
 	# Binary
 	cnt = n_joint
 	for i in xrange(n_joint):
-		for j in xrange(i+1, n_joint):
+		for j in xrange( n_joint):
+			if i == j:
+				continue
 			weight[(i,j)] = weight_arr[cnt]
-			weight[(j,i)] - weight[(i,j)]
 			cnt += 1
 	return weight
 
@@ -108,7 +111,7 @@ def make_pts1d():
 	cnt = 0
 	for y in xrange(512):
 		for x in range(512):
-			pos_arr[cnt] = (y,x)
+			pos_arr[cnt] = (x,y)
 			cnt += 1
 	print "pts1d shape", pos_arr.shape
 	return pos_arr
@@ -116,12 +119,12 @@ def make_pts1d():
 def make_score1d(score):
 	# Assuming score1d has only positive entries
 	score1d = score.reshape((-1,))
-	if score1d.min() < 0:
-		score1d = -score1d.min()*np.ones(score1d.shape) + score1d
+	#if score1d.min() < 0:
+	score1d = -score1d.min()*np.ones(score1d.shape) + score1d
 	tot = np.sum(score1d)
 	if tot != 0:
 		score1d = score1d / tot
-	assert(score1d.min() >= 0)
+	assert(score1d.min() == 0)
 	assert(score1d.max() <= 1)
 	return score1d
 
@@ -131,7 +134,7 @@ print "Loading data..."
 score, joint_location = ldf.load_full_person_data("../fcn_joint_predict/train_score_fullHuman.h5")
 n_imgs = score.shape[0]
 n_joint = 16
-feature_len = n_joint + 120 #16 choose 2 binary
+feature_len = n_joint + 16*15*4 #16 choose 2 binary
 pos_wdw_half = 5
 neg_wdw_half = 12
 pts1d = make_pts1d()
@@ -139,9 +142,9 @@ pts1d = make_pts1d()
 # Make features
 print "Making features..."
 # n_cls_config = 43046721 #3^16
-n_cls_config = 40000
+n_cls_config = 4
 X_train = np.zeros((2*n_cls_config*n_imgs, feature_len))
-Y_train = np.ones((2*n_cls_config*n_imgs, 1))
+Y_train = np.ones((2*n_cls_config*n_imgs, ))
 cnt = 0
 for i in xrange(n_imgs):
 	# Construct positive configurations
@@ -159,18 +162,19 @@ for i in xrange(n_imgs):
 
 	# Construct features for each configuration
 	for p in pos_config:
-		X_train[cnt,:] = calc_feature(p, score, feature_len, n_joint)
+		X_train[cnt,:] = calc_feature(p, score[i], feature_len, n_joint)
 		cnt += 1
 	for p in neg_config:
-		X_train[cnt,:] = calc_feature(p, score, feature_len, n_joint)
-		Y_train[cnt,:] = -1
+		X_train[cnt,:] = calc_feature(p, score[i], feature_len, n_joint)
+		Y_train[cnt] = -1
 		cnt += 1
-
 # Train SVM
 smodel = BinaryClf(feature_len)
 svm = OneSlackSSVM(smodel)
 print("fitting svm...")
+print X_train.shape, Y_train.shape
 svm.fit(X_train, Y_train)
 
 # Write weights
 weights = format_weights(svm.w, n_joint)
+print weights
