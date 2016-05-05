@@ -33,20 +33,29 @@ def random_pose_pos(joint_gt, n_joint, wdw_half):
 		x = joint_gt[3*i]
 		y = joint_gt[3*i+1]
 		x_j = random.randint(max(0, x-wdw_half), min(511, x+wdw_half))
-		y_j = random.randit(max(0, y-wdw_half), min(511, y+wdw_half))
+		y_j = random.randint(max(0, y-wdw_half), min(511, y+wdw_half))
 		rp.append(Pt(x_j, y_j))
 	return tuple(rp)
 
-def random_pose_neg(joint_gt, n_joint, wdw_half, pts_1d, score_1d):
+def random_pose_neg(joint_gt, n_joint, wdw_half, pts_1d, score):
 	# Returns a tuple of 16 Pt
 	# Selected with probability proportional to the score
 	# Points too close to ground truth are rejected
 	rp = []
 	for i in xrange(n_joint):
+		score_dup = score[i].copy()
+		x_gt = int(joint_gt[3*i])
+		y_gt = int(joint_gt[3*i+1])
+		min_score = score_dup.min()
+		#print x_gt, y_gt, wdw_half, max(0, y_gt-wdw_half), min(512, y_gt+wdw_half+1)
+		for y in xrange(max(0, y_gt-wdw_half), min(512, y_gt+wdw_half+1)):
+			for x in xrange(max(0, x_gt-wdw_half), min(512, x_gt+wdw_half+1)):
+				score_dup[y,x] = min_score
+		score_1d = make_score1d(score_dup)
 		p = np.random.choice(pts_1d, p=score_1d)
 		while too_close(p, joint_gt[3*i], joint_gt[3*i+1], wdw_half):
 			p = np.random.choice(pts_1d, p=score_1d)
-			print p, "too_close to (", joint_gt[3*i], "," joint_gt[3*i+1],")"
+			print p, "too_close to (", joint_gt[3*i], ",", joint_gt[3*i+1],")"
 		rp.append(p)
 	return tuple(rp)
 
@@ -95,36 +104,44 @@ def format_weights(weight_arr, n_joint):
 
 def make_pts1d():
 	# Return 1 x (512*512) numpy array containing position tuples
-	pos_list = []
+	pos_arr = np.empty((512*512,),dtype=object)
+	cnt = 0
 	for y in xrange(512):
 		for x in range(512):
-			pos_list.append((y,x))
-	return np.array(pos_list).reshape(1, -1)
+			pos_arr[cnt] = (y,x)
+			cnt += 1
+	print "pts1d shape", pos_arr.shape
+	return pos_arr
 
 def make_score1d(score):
 	# Assuming score1d has only positive entries
-	score1d = score.reshape((1,-1))
-	tot = abs(np.sum(score))
+	score1d = score.reshape((-1,))
+	if score1d.min() < 0:
+		score1d = -score1d.min()*np.ones(score1d.shape) + score1d
+	tot = np.sum(score1d)
 	if tot != 0:
 		score1d = score1d / tot
+	assert(score1d.min() >= 0)
+	assert(score1d.max() <= 1)
 	return score1d
 
 
 # Load the ground truth
+print "Loading data..."
 score, joint_location = ldf.load_full_person_data("../fcn_joint_predict/train_score_fullHuman.h5")
 n_imgs = score.shape[0]
 n_joint = 16
 feature_len = n_joint + 120 #16 choose 2 binary
 pos_wdw_half = 5
 neg_wdw_half = 12
-score1d = make_score1d()
 pts1d = make_pts1d()
 
 # Make features
-X_train = np.zeros((2*n_cls_config*n_imgs, feature_len))
-Y_train = np.ones((2*n_cls_config*n_imgs, 1))
+print "Making features..."
 # n_cls_config = 43046721 #3^16
 n_cls_config = 40000
+X_train = np.zeros((2*n_cls_config*n_imgs, feature_len))
+Y_train = np.ones((2*n_cls_config*n_imgs, 1))
 cnt = 0
 for i in xrange(n_imgs):
 	# Construct positive configurations
@@ -138,13 +155,13 @@ for i in xrange(n_imgs):
 	# Construct negative configurations
 	neg_config = []
 	for j in xrange(n_cls_config):
-		neg_config.append(random_pose_neg(joint_location[i,:], n_joint, neg_wdw_half, pts1d, score1d))
+		neg_config.append(random_pose_neg(joint_location[i,:], n_joint, neg_wdw_half, pts1d, score[i]))
 
 	# Construct features for each configuration
 	for p in pos_config:
 		X_train[cnt,:] = calc_feature(p, score, feature_len, n_joint)
 		cnt += 1
-	for p in neg_config
+	for p in neg_config:
 		X_train[cnt,:] = calc_feature(p, score, feature_len, n_joint)
 		Y_train[cnt,:] = -1
 		cnt += 1
